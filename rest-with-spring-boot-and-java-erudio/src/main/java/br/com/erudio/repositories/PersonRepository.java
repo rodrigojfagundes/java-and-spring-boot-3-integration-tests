@@ -11,11 +11,11 @@ import br.com.erudio.model.Person;
 
 @Repository
 public interface PersonRepository extends JpaRepository<Person, Long> {
-
+	
 	Optional<Person> findByEmail(String email);
 	@Query("select p from Person p where p.firstName =?1 and p.lastName =?2")
 	Person findByJPQL(String firstName, String lastName);
-
+	
 	@Query("select p from Person p where p.firstName =:firstName and p.lastName =:lastName")
 	Person findByJPQLNamedParameters(
 			@Param("firstName") String firstName,
