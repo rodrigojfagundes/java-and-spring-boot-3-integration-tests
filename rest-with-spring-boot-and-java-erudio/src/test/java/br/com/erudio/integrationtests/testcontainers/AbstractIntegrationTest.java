@@ -16,7 +16,6 @@ import org.testcontainers.lifecycle.Startables;
 //
 //classe de INFRAESTRUTURA q sera utilizado por todos TESTS de INTEGRACAO
 //para SUBIR UM BANCO EM RUNTIME
-
 @ContextConfiguration(initializers = AbstractIntegrationTest.Initializer.class)
 public class AbstractIntegrationTest {
 	
@@ -28,7 +27,7 @@ public class AbstractIntegrationTest {
 		private static void startContainers() {
 			Startables.deepStart(Stream.of(mysql)).join();
 		}
-
+		
 		private static Map<String, String> createConnectionConfiguration(){
 			return Map.of(
 			"spring.datasource.url", mysql.getJdbcUrl(),
@@ -39,6 +38,7 @@ public class AbstractIntegrationTest {
 		@Override
 		public void initialize(ConfigurableApplicationContext applicationContext) {
 			startContainers();
+			
 			ConfigurableEnvironment environment = applicationContext.getEnvironment();
 
 			@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -51,9 +51,5 @@ public class AbstractIntegrationTest {
 			environment.getPropertySources().addFirst(testcontainers);
 			
 		}
-		
-
-		
-		
 	}
 }

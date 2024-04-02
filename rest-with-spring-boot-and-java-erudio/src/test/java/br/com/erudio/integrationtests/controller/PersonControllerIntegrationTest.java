@@ -27,19 +27,21 @@ import io.restassured.filter.log.RequestLoggingFilter;
 import io.restassured.filter.log.ResponseLoggingFilter;
 import io.restassured.specification.RequestSpecification;
 
-
+//
 //Essa class de test de integracao tera todo o ciclo de vida
 //do CONTROLLER para o SERVICE e dps para o REPOSITORY ou seja
 //pecorre toda as camadas
+//
+//herdando o ABSTRACTINTEGRATIONTEST q é onde tem as CONFIG para
+//rodar o CONTAINER com o MYSQL
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @TestMethodOrder(OrderAnnotation.class)
 class PersonControllerIntegrationTest extends AbstractIntegrationTest {
 
 	private static RequestSpecification specification;
 	private static ObjectMapper objectMapper;
-	private static Person person;
-		
-
+	private static Person person;	
+	
 	@BeforeAll
 	public static void setup() {
 		objectMapper = new ObjectMapper();
@@ -60,11 +62,13 @@ class PersonControllerIntegrationTest extends AbstractIntegrationTest {
 	}
 	
 	//TEST do TESTANDO o METODO CREATE PERSON... com TEST de INTEGRACAO
+	//
+	//test[System Under Test]_[Condition or State Change]_[Expected Result]
 	@DisplayName("JUnit integration given Person Object Test when Create One Person Should Return A Person Object")
 	@Order(1)
 	@Test
 	void integrationTestGivenPersonObject_when_CreateOnePerson_ShouldReturnAPersonObject() throws JsonMappingException, JsonProcessingException {
-
+		//
 		//vamos fazer uma REQUISICAO do TIPO POST para o metodo CREATE do
 		//PERSONCONTROLLER.JAVA... Passsando um OBJ do tipo PERSON
 		//
@@ -101,13 +105,10 @@ class PersonControllerIntegrationTest extends AbstractIntegrationTest {
 		//e passando o PERSON.CLASS... Ou seja e para PEGA o q ta na VAR
 		//CONTENT e criar um OBJ PERSON
 		Person createPerson = objectMapper.readValue(content, Person.class);
-	
 		person = createPerson;
 		
 		
-
-		//ASSERT 
-		//para poder verificar se O RETORNO do METODO CREATE
+		//ASSERT para poder verificar se O RETORNO do METODO CREATE
 		//ta conforme o esperado
 		assertNotNull(createPerson);
 		assertNotNull(createPerson.getId());
@@ -124,9 +125,43 @@ class PersonControllerIntegrationTest extends AbstractIntegrationTest {
 		assertNotNull("Male", createPerson.getGender());
 		assertNotNull("leandro@erudio.com.br", createPerson.getEmail());
 	}
+
+	@DisplayName("JUnit integration given Person Object Test when Update One Person Should Return A Updated Person Object")
+	@Order(2)
+	@Test
+	void integrationTestGivenPersonObject_when_UpdateteOnePerson_ShouldReturnAUpdatedPersonObject() throws JsonMappingException, JsonProcessingException {
+
+		person.setFirstName("Leonardo");
+		person.setEmail("leonardo@erudio.com.br");
+
+		var content = given().spec(specification)
+				.contentType(TestConfigs.CONTENT_TYPE_JSON)
+				.body(person)
+		.when()
+			.put()
+		.then()
+			.statusCode(200)
+		.extract()
+			.body()
+				.asString();		
+		Person createPerson = objectMapper.readValue(content, Person.class);
+		
+		person = createPerson;
+		assertNotNull(createPerson);
+		assertNotNull(createPerson.getId());
+		assertNotNull(createPerson.getFirstName());	
+		assertNotNull(createPerson.getLastName());
+		assertNotNull(createPerson.getAddress());
+		assertNotNull(createPerson.getGender());
+		assertNotNull(createPerson.getEmail());
+
+		assertTrue(createPerson.getId() > 0);
+		assertEquals("Leonardo", createPerson.getFirstName());	
+		assertNotNull("Costa", createPerson.getLastName());
+		assertNotNull("Uberlandia - Minas Gerais - Brasil", createPerson.getAddress());
+		assertNotNull("Male", createPerson.getGender());
+		assertNotNull("leonardo@erudio.com.br", createPerson.getEmail());
+	}
 	
 	
 }
-
-
-
