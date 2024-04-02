@@ -33,12 +33,9 @@ public class PersonServices {
 		return repository.findById(id)
 			.orElseThrow(() -> new ResourceNotFoundException("No records found for this ID!"));
 	}
-	
-	//metodo para CAD um novo PERSON
-	public Person create(Person person) {
 
+	public Person create(Person person) {
 		logger.info("Creating one person!");
-		
 		Optional<Person> savedPerson = repository.findByEmail(person.getEmail());
 		if(savedPerson.isPresent()) {
 			throw new ResourceNotFoundException(
@@ -48,7 +45,7 @@ public class PersonServices {
 		
 		return repository.save(person);
 	}
-	
+
 	public Person update(Person person) {
 		
 		logger.info("Updating one person!");

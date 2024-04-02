@@ -10,13 +10,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import br.com.erudio.config.TestConfigs;
 import br.com.erudio.integrationtests.testcontainers.AbstractIntegrationTest;
 
-//TEST DE INTEGRACAO - para verificar se a PAG do SWAGGER ta carregando
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 class SwaggerIntegrationTest extends AbstractIntegrationTest {
 	
 	
 	//TEST para verificar se a pagina do SWAGGER ta carregando
 	//localhost:8888/swagger-ui/index.html
+	//test[System Under Test]_[Condition or State Change]_[Expected Result]
 	@DisplayName("Should Display Swagger Ui Page")
 	@Test
 	void testShouldDisplaySwaggerUiPage() {
