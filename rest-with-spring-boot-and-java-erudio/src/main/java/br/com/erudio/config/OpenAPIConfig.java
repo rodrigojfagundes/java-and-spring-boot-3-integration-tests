@@ -7,11 +7,9 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
 
-//CLASS de CONFIGURACAO do SWAGGER/OPENAPI
-//usando a ANNOTATION @CONFIGURATION para dizer q e uma classe de CONFIGURACAO
 @Configuration
 public class OpenAPIConfig {
-
+	
 	@Bean
 	OpenAPI customOpenAPI() {
 		return new OpenAPI()

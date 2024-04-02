@@ -17,11 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.erudio.model.Person;
 import br.com.erudio.services.PersonServices;
 
-
 @RestController
 @RequestMapping("/person")
 public class PersonController {
-	
+
 	@Autowired
 	private PersonServices service;
 	
@@ -29,7 +28,7 @@ public class PersonController {
 	public List<Person> findAll() {
 		return service.findAll();
 	}
-	
+
 	@GetMapping(value = "/{id}",
 			produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Person> findById(@PathVariable(value = "id") Long id) {
@@ -40,7 +39,6 @@ public class PersonController {
 			
 		}
 	}
-	
 	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,
 			produces = MediaType.APPLICATION_JSON_VALUE)
 	public Person create(@RequestBody Person person) {
@@ -57,7 +55,7 @@ public class PersonController {
 			
 		}
 	}
-	
+
 	@DeleteMapping(value = "/{id}")
 	public ResponseEntity<?> delete(@PathVariable(value = "id") Long id) {
 		service.delete(id);
