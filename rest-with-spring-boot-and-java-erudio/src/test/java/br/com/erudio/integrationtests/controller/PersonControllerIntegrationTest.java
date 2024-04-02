@@ -30,13 +30,13 @@ import io.restassured.filter.log.RequestLoggingFilter;
 import io.restassured.filter.log.ResponseLoggingFilter;
 import io.restassured.specification.RequestSpecification;
 
-//
 //Essa class de test de integracao tera todo o ciclo de vida
 //do CONTROLLER para o SERVICE e dps para o REPOSITORY ou seja
 //pecorre toda as camadas
 //
 //herdando o ABSTRACTINTEGRATIONTEST q é onde tem as CONFIG para
 //rodar o CONTAINER com o MYSQL
+
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @TestMethodOrder(OrderAnnotation.class)
 class PersonControllerIntegrationTest extends AbstractIntegrationTest {
@@ -52,16 +52,13 @@ class PersonControllerIntegrationTest extends AbstractIntegrationTest {
 		
 		//setando as CONFIG do SPECIFICATION q e do TIPO REQUESTSPECIFICATION
 		//q serve para CONCENTRAR as INFO q serao REPETIDAS em MAIS DE UM TEST
-		//
-		//no SETBASEPATH nos passamos qual o LINK q vai cair na 
-		//CLASS PERSONCONTROLLER no caso e o /PERSON .... localhost:8888/person
 		specification = new RequestSpecBuilder()
 				.setBasePath("/person")
 				.setPort(TestConfigs.SERVER_PORT)
 					.addFilter(new RequestLoggingFilter(LogDetail.ALL))
 					.addFilter(new ResponseLoggingFilter(LogDetail.ALL))
 				.build();
-		
+
 		person = new Person("Leandro", 
 				"Costa", 
 				"leandro@erudio.com.br",
@@ -70,8 +67,6 @@ class PersonControllerIntegrationTest extends AbstractIntegrationTest {
 	}
 	
 	//TEST INTEGRATION - TESTANDO o METODO CREATE PERSON... com TEST de INTEGRACAO
-	//
-	//test[System Under Test]_[Condition or State Change]_[Expected Result]
 	@DisplayName("JUnit integration given Person Object Test when Create One Person Should Return A Person Object")
 	@Order(1)
 	@Test
@@ -103,18 +98,16 @@ class PersonControllerIntegrationTest extends AbstractIntegrationTest {
 		.extract()
 			.body()
 				.asString();
-		
+
 		//chamando o metodo READVALUE do OBJECTMAPPER e passando a nossa
 		//VAR CONTENT (q tem o retorno do POST do PERSON no formato JSON)
 		//e passando o PERSON.CLASS... Ou seja e para PEGA o q ta na VAR
 		//CONTENT e criar um OBJ PERSON
 		Person createPerson = objectMapper.readValue(content, Person.class);
-
 		person = createPerson;
-
+		
 		//ASSERT para poder verificar se O RETORNO do METODO CREATE
 		//ta conforme o esperado
-
 		assertNotNull(createPerson);
 		assertNotNull(createPerson.getId());
 		assertNotNull(createPerson.getFirstName());	
@@ -122,7 +115,8 @@ class PersonControllerIntegrationTest extends AbstractIntegrationTest {
 		assertNotNull(createPerson.getAddress());
 		assertNotNull(createPerson.getGender());
 		assertNotNull(createPerson.getEmail());
-
+				
+		//verificando valores ESPECIFICOS
 		assertTrue(createPerson.getId() > 0);
 		assertEquals("Leandro", createPerson.getFirstName());	
 		assertNotNull("Costa", createPerson.getLastName());
@@ -131,6 +125,7 @@ class PersonControllerIntegrationTest extends AbstractIntegrationTest {
 		assertNotNull("leandro@erudio.com.br", createPerson.getEmail());
 	}
 	
+	//test[System Under Test]_[Condition or State Change]_[Expected Result]
 	@DisplayName("JUnit integration given Person Object Test when Update One Person Should Return A Updated Person Object")
 	@Order(2)
 	@Test
@@ -168,6 +163,10 @@ class PersonControllerIntegrationTest extends AbstractIntegrationTest {
 		assertNotNull("leonardo@erudio.com.br", updatedPerson.getEmail());
 	}
 	
+	
+	//TEST INTEGRATION Testando o METODO FINDBYID do PERSONCONTROLLER.JAVA
+	//
+	//test[System Under Test]_[Condition or State Change]_[Expected Result]
 	@DisplayName("JUnit integration given Person Object when findById Should Return A Person Object")
 	@Order(3)
 	@Test
@@ -182,7 +181,7 @@ class PersonControllerIntegrationTest extends AbstractIntegrationTest {
 		.extract()
 			.body()
 				.asString();
-		
+
 		Person foundPerson = objectMapper.readValue(content, Person.class);
 
 		assertNotNull(foundPerson);
@@ -200,7 +199,8 @@ class PersonControllerIntegrationTest extends AbstractIntegrationTest {
 		assertNotNull("Male", foundPerson.getGender());
 		assertNotNull("leonardo@erudio.com.br", foundPerson.getEmail());
 	}
-	
+
+	//test[System Under Test]_[Condition or State Change]_[Expected Result]
 	@DisplayName("JUnit integration given Person Object when findAll Should Return a Persons List")
 	@Order(4)
 	@Test
@@ -212,15 +212,14 @@ class PersonControllerIntegrationTest extends AbstractIntegrationTest {
 				"Uberlandia - Minas Gerais - Brasil",
 				"Female"
 			);
-
+		
 		given().spec(specification)
 				.contentType(TestConfigs.CONTENT_TYPE_JSON)
 				.body(anotherPerson)
 		.when()
 			.post()
 		.then()
-			.statusCode(200);
-		
+			.statusCode(200);			
 		var content = given().spec(specification)
 		.when()
 			.get()
@@ -241,7 +240,7 @@ class PersonControllerIntegrationTest extends AbstractIntegrationTest {
 		assertNotNull(foundPersonOne.getAddress());
 		assertNotNull(foundPersonOne.getGender());
 		assertNotNull(foundPersonOne.getEmail());
-
+		
 		assertTrue(foundPersonOne.getId() > 0);
 		assertEquals("Leonardo", foundPersonOne.getFirstName());	
 		assertNotNull("Costa", foundPersonOne.getLastName());
@@ -250,7 +249,7 @@ class PersonControllerIntegrationTest extends AbstractIntegrationTest {
 		assertNotNull("leonardo@erudio.com.br", foundPersonOne.getEmail());
 
 		Person foundPersonTwo = people.get(1);
-		
+
 		assertNotNull(foundPersonTwo);
 		assertNotNull(foundPersonTwo.getId());
 		assertNotNull(foundPersonTwo.getFirstName());	
@@ -258,7 +257,7 @@ class PersonControllerIntegrationTest extends AbstractIntegrationTest {
 		assertNotNull(foundPersonTwo.getAddress());
 		assertNotNull(foundPersonTwo.getGender());
 		assertNotNull(foundPersonTwo.getEmail());
-		
+
 		assertTrue(foundPersonTwo.getId() > 0);
 		assertEquals("Gabriela", foundPersonTwo.getFirstName());	
 		assertNotNull("Rodriguez", foundPersonTwo.getLastName());
@@ -267,9 +266,20 @@ class PersonControllerIntegrationTest extends AbstractIntegrationTest {
 		assertNotNull("gabi@erudio.com.br", foundPersonTwo.getEmail());
 	
 		
-	}
+	}	
 	
+	//test[System Under Test]_[Condition or State Change]_[Expected Result]
+	@DisplayName("JUnit integration given Person Object when delete Should Return No Content")
+	@Order(5)
+	@Test
+	void integrationTestGivenPersonObject_when_delete_ShouldReturnNoContent() throws JsonMappingException, JsonProcessingException {
+
+		var content = given().spec(specification)
+				.pathParam("id", person.getId())
+		.when()
+			.delete("{id}")
+		.then()
+			.statusCode(204);		
+	}
 }
-
-
 

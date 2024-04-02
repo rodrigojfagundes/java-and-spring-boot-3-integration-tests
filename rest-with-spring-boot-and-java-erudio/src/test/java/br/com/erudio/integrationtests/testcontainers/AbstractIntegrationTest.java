@@ -37,7 +37,6 @@ public class AbstractIntegrationTest {
 		@Override
 		public void initialize(ConfigurableApplicationContext applicationContext) {
 			startContainers();
-
 			ConfigurableEnvironment environment = applicationContext.getEnvironment();
 
 			@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -49,7 +48,6 @@ public class AbstractIntegrationTest {
 
 			environment.getPropertySources().addFirst(testcontainers);
 			
-		}
-		
+		}		
 	}
 }

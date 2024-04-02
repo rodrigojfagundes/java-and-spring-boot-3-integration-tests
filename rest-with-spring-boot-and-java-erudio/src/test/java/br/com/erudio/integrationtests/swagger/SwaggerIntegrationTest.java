@@ -11,17 +11,18 @@ import br.com.erudio.config.TestConfigs;
 import br.com.erudio.integrationtests.testcontainers.AbstractIntegrationTest;
 
 //TEST DE INTEGRACAO - para verificar se a PAG do SWAGGER ta carregando
-//criando a CLASS SWAGGER INTEGRATION TEST
 
 //herdando o ABSTRACTINTEGRATIONTEST q é onde tem as CONFIG para
 //rodar o CONTAINER com o MYSQL
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 class SwaggerIntegrationTest extends AbstractIntegrationTest {
 	
-	//test[System Under Test]_[Condition or State Change]_[Expected Result]
+	
+	//TEST para verificar se a pagina do SWAGGER ta carregando
+	//localhost:8888/swagger-ui/index.html
 	@DisplayName("Should Display Swagger Ui Page")
 	@Test
-	void testShouldDisplaySwaggerUiPage() {	
+	void testShouldDisplaySwaggerUiPage() {
 		var content = given().basePath("/swagger-ui/index.html")
 		.port(TestConfigs.SERVER_PORT)
 		.when()
