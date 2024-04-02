@@ -18,7 +18,7 @@ public class PersonServices {
 	
 	@Autowired
 	PersonRepository repository;
-
+	
 	public List<Person> findAll() {
 		logger.info("Finding all people!");
 
@@ -33,20 +33,21 @@ public class PersonServices {
 	}
 	
 	public Person create(Person person) {
+
 		logger.info("Creating one person!");
 		Optional<Person> savedPerson = repository.findByEmail(person.getEmail());
 
 		if(savedPerson.isPresent()) {
 			throw new ResourceNotFoundException(
 					"Person already exist with given e-Mail: " + person.getEmail());
-		}
-		
-		
+		}		
 		return repository.save(person);
 	}
-
-	public Person update(Person person) {		
-		logger.info("Updating one person!");		
+	
+	public Person update(Person person) {
+		
+		logger.info("Updating one person!");
+		
 		var entity = repository.findById(person.getId())
 			.orElseThrow(() -> new ResourceNotFoundException("No records found for this ID!"));
 
@@ -57,7 +58,7 @@ public class PersonServices {
 		
 		return repository.save(person);
 	}
-	
+
 	public void delete(Long id) {
 		
 		logger.info("Deleting one person!");

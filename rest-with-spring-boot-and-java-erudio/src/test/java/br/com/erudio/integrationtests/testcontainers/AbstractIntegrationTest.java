@@ -18,12 +18,11 @@ import org.testcontainers.lifecycle.Startables;
 //para SUBIR UM BANCO EM RUNTIME
 @ContextConfiguration(initializers = AbstractIntegrationTest.Initializer.class)
 public class AbstractIntegrationTest {
-	
-	
+		
 	static class Initializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
 
 		static MySQLContainer<?> mysql = new MySQLContainer<>("mysql:8.0.28");
-		
+
 		private static void startContainers() {
 			Startables.deepStart(Stream.of(mysql)).join();
 		}
@@ -34,11 +33,11 @@ public class AbstractIntegrationTest {
 			"spring.datasource.username", mysql.getUsername(),
 			"spring.datasource.password", mysql.getPassword());
 		}
-		
+
 		@Override
 		public void initialize(ConfigurableApplicationContext applicationContext) {
 			startContainers();
-			
+
 			ConfigurableEnvironment environment = applicationContext.getEnvironment();
 
 			@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -50,6 +49,7 @@ public class AbstractIntegrationTest {
 
 			environment.getPropertySources().addFirst(testcontainers);
 			
-		}
+		}		
+		
 	}
 }

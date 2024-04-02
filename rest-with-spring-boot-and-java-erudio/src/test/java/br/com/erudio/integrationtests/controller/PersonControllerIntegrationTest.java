@@ -27,7 +27,7 @@ import io.restassured.filter.log.RequestLoggingFilter;
 import io.restassured.filter.log.ResponseLoggingFilter;
 import io.restassured.specification.RequestSpecification;
 
-//
+
 //Essa class de test de integracao tera todo o ciclo de vida
 //do CONTROLLER para o SERVICE e dps para o REPOSITORY ou seja
 //pecorre toda as camadas
@@ -40,13 +40,20 @@ class PersonControllerIntegrationTest extends AbstractIntegrationTest {
 
 	private static RequestSpecification specification;
 	private static ObjectMapper objectMapper;
-	private static Person person;	
+	private static Person person;
+	
 	
 	@BeforeAll
 	public static void setup() {
 		objectMapper = new ObjectMapper();
 		objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 		
+		//setando as CONFIG do SPECIFICATION q e do TIPO REQUESTSPECIFICATION
+		//q serve para CONCENTRAR as INFO q serao REPETIDAS em MAIS DE UM TEST
+		//
+		//no SETBASEPATH nos passamos qual o LINK q vai cair na 
+		//CLASS PERSONCONTROLLER no caso e o /PERSON .... localhost:8888/person
+		//a PORTA q exec o backend nos pegamos do SERVER_PORT do TESTCONFIG
 		specification = new RequestSpecBuilder()
 				.setBasePath("/person")
 				.setPort(TestConfigs.SERVER_PORT)
@@ -61,7 +68,7 @@ class PersonControllerIntegrationTest extends AbstractIntegrationTest {
 				"Male");
 	}
 	
-	//TEST do TESTANDO o METODO CREATE PERSON... com TEST de INTEGRACAO
+	//TEST INTEGRATION - TESTANDO o METODO CREATE PERSON... com TEST de INTEGRACAO
 	//
 	//test[System Under Test]_[Condition or State Change]_[Expected Result]
 	@DisplayName("JUnit integration given Person Object Test when Create One Person Should Return A Person Object")
@@ -98,18 +105,17 @@ class PersonControllerIntegrationTest extends AbstractIntegrationTest {
 			.body()
 				.asString();
 		
-		
-
 		//chamando o metodo READVALUE do OBJECTMAPPER e passando a nossa
 		//VAR CONTENT (q tem o retorno do POST do PERSON no formato JSON)
 		//e passando o PERSON.CLASS... Ou seja e para PEGA o q ta na VAR
 		//CONTENT e criar um OBJ PERSON
 		Person createPerson = objectMapper.readValue(content, Person.class);
+
 		person = createPerson;
-		
 		
 		//ASSERT para poder verificar se O RETORNO do METODO CREATE
 		//ta conforme o esperado
+
 		assertNotNull(createPerson);
 		assertNotNull(createPerson.getId());
 		assertNotNull(createPerson.getFirstName());	
@@ -117,7 +123,8 @@ class PersonControllerIntegrationTest extends AbstractIntegrationTest {
 		assertNotNull(createPerson.getAddress());
 		assertNotNull(createPerson.getGender());
 		assertNotNull(createPerson.getEmail());
-		
+				
+		//verificando valores ESPECIFICOS
 		assertTrue(createPerson.getId() > 0);
 		assertEquals("Leandro", createPerson.getFirstName());	
 		assertNotNull("Costa", createPerson.getLastName());
@@ -125,12 +132,11 @@ class PersonControllerIntegrationTest extends AbstractIntegrationTest {
 		assertNotNull("Male", createPerson.getGender());
 		assertNotNull("leandro@erudio.com.br", createPerson.getEmail());
 	}
-
+	
 	@DisplayName("JUnit integration given Person Object Test when Update One Person Should Return A Updated Person Object")
 	@Order(2)
 	@Test
-	void integrationTestGivenPersonObject_when_UpdateteOnePerson_ShouldReturnAUpdatedPersonObject() throws JsonMappingException, JsonProcessingException {
-
+	void integrationTestGivenPersonObject_when_UpdateOnePerson_ShouldReturnAUpdatedPersonObject() throws JsonMappingException, JsonProcessingException {
 		person.setFirstName("Leonardo");
 		person.setEmail("leonardo@erudio.com.br");
 
@@ -143,25 +149,61 @@ class PersonControllerIntegrationTest extends AbstractIntegrationTest {
 			.statusCode(200)
 		.extract()
 			.body()
-				.asString();		
-		Person createPerson = objectMapper.readValue(content, Person.class);
+				.asString();
+				
+		Person updatedPerson = objectMapper.readValue(content, Person.class);
+		person = updatedPerson;
 		
-		person = createPerson;
-		assertNotNull(createPerson);
-		assertNotNull(createPerson.getId());
-		assertNotNull(createPerson.getFirstName());	
-		assertNotNull(createPerson.getLastName());
-		assertNotNull(createPerson.getAddress());
-		assertNotNull(createPerson.getGender());
-		assertNotNull(createPerson.getEmail());
-
-		assertTrue(createPerson.getId() > 0);
-		assertEquals("Leonardo", createPerson.getFirstName());	
-		assertNotNull("Costa", createPerson.getLastName());
-		assertNotNull("Uberlandia - Minas Gerais - Brasil", createPerson.getAddress());
-		assertNotNull("Male", createPerson.getGender());
-		assertNotNull("leonardo@erudio.com.br", createPerson.getEmail());
+		assertNotNull(updatedPerson);
+		assertNotNull(updatedPerson.getId());
+		assertNotNull(updatedPerson.getFirstName());	
+		assertNotNull(updatedPerson.getLastName());
+		assertNotNull(updatedPerson.getAddress());
+		assertNotNull(updatedPerson.getGender());
+		assertNotNull(updatedPerson.getEmail());
+		
+		assertTrue(updatedPerson.getId() > 0);
+		assertEquals("Leonardo", updatedPerson.getFirstName());	
+		assertNotNull("Costa", updatedPerson.getLastName());
+		assertNotNull("Uberlandia - Minas Gerais - Brasil", updatedPerson.getAddress());
+		assertNotNull("Male", updatedPerson.getGender());
+		assertNotNull("leonardo@erudio.com.br", updatedPerson.getEmail());
 	}
 	
+	@DisplayName("JUnit integration given Person Object when findById Should Return A Person Object")
+	@Order(3)
+	@Test
+	void integrationTestGivenPersonObject_when_findById_ShouldReturnAPersonObject() throws JsonMappingException, JsonProcessingException {
+		
+		var content = given().spec(specification)
+				.pathParam("id", person.getId())
+		.when()
+			.get("{id}")
+		.then()
+			.statusCode(200)
+		.extract()
+			.body()
+				.asString();
+				
+		Person foundPerson = objectMapper.readValue(content, Person.class);
+		
+		assertNotNull(foundPerson);
+		assertNotNull(foundPerson.getId());
+		assertNotNull(foundPerson.getFirstName());	
+		assertNotNull(foundPerson.getLastName());
+		assertNotNull(foundPerson.getAddress());
+		assertNotNull(foundPerson.getGender());
+		assertNotNull(foundPerson.getEmail());
+		
+		assertTrue(foundPerson.getId() > 0);
+		assertEquals("Leonardo", foundPerson.getFirstName());	
+		assertNotNull("Costa", foundPerson.getLastName());
+		assertNotNull("Uberlandia - Minas Gerais - Brasil", foundPerson.getAddress());
+		assertNotNull("Male", foundPerson.getGender());
+		assertNotNull("leonardo@erudio.com.br", foundPerson.getEmail());
+	}
 	
 }
+
+
+

@@ -11,9 +11,8 @@ import br.com.erudio.model.Person;
 
 @Repository
 public interface PersonRepository extends JpaRepository<Person, Long> {
-	
+
 	Optional<Person> findByEmail(String email);
-	
 	@Query("select p from Person p where p.firstName =?1 and p.lastName =?2")
 	Person findByJPQL(String firstName, String lastName);
 	
@@ -27,7 +26,7 @@ public interface PersonRepository extends JpaRepository<Person, Long> {
 	
 	@Query(value = "select * from person p where p.first_name =:firstName and p.last_name =:lastName", nativeQuery = true)
 	Person findByNativeSQLwithNamedParameters(
-			//usando a ANNOTATION @PARAM para para receber OS PARAMETROS q queremos usar para PESQUISAR
+	
 			@Param("firstName") String firstName,
 			@Param("lastName") String lastName);
 	

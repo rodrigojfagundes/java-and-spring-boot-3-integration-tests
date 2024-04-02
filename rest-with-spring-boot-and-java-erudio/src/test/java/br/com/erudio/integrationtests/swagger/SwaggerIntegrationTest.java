@@ -11,24 +11,20 @@ import br.com.erudio.config.TestConfigs;
 import br.com.erudio.integrationtests.testcontainers.AbstractIntegrationTest;
 
 //TEST DE INTEGRACAO - para verificar se a PAG do SWAGGER ta carregando
-
+//
+//herdando o ABSTRACTINTEGRATIONTEST q é onde tem as CONFIG para
+//rodar o CONTAINER com o MYSQL
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 class SwaggerIntegrationTest extends AbstractIntegrationTest {
 	
 	
 	//TEST para verificar se a pagina do SWAGGER ta carregando
 	//localhost:8888/swagger-ui/index.html
+	//
+	//test[System Under Test]_[Condition or State Change]_[Expected Result]
 	@DisplayName("Should Display Swagger Ui Page")
 	@Test
 	void testShouldDisplaySwaggerUiPage() {
-		//pedindo para acessar o LOCALHOST:8888/swagger-ui/index.html
-		//a PORTA nos vamos usar a q ta na CLASSE TESTCONFIG
-		//
-		//WHEN().get -> quando for feita uma requisicao do TIPO GET
-		//para o LOCALHOST:8888/swagger... THEN() -> ENTAO esperamos ter um
-		//STATUSCODE (200) ou seja SUCESSO... E queremos EXTRACT.BODY ->
-		//extrair o q ta no CONTEUDO da PAGINA como uma STRING
-
 		var content = given().basePath("/swagger-ui/index.html")
 		.port(TestConfigs.SERVER_PORT)
 		.when()
