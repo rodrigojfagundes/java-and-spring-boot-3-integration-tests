@@ -23,7 +23,7 @@ public class PersonController {
 
 	@Autowired
 	private PersonServices service;
-
+	
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 	public List<Person> findAll() {
 		return service.findAll();
@@ -56,7 +56,7 @@ public class PersonController {
 			
 		}
 	}
-
+	
 	@DeleteMapping(value = "/{id}")
 	public ResponseEntity<?> delete(@PathVariable(value = "id") Long id) {
 		service.delete(id);

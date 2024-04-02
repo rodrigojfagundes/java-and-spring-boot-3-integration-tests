@@ -5,6 +5,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
@@ -27,7 +30,7 @@ import io.restassured.filter.log.RequestLoggingFilter;
 import io.restassured.filter.log.ResponseLoggingFilter;
 import io.restassured.specification.RequestSpecification;
 
-
+//
 //Essa class de test de integracao tera todo o ciclo de vida
 //do CONTROLLER para o SERVICE e dps para o REPOSITORY ou seja
 //pecorre toda as camadas
@@ -42,7 +45,6 @@ class PersonControllerIntegrationTest extends AbstractIntegrationTest {
 	private static ObjectMapper objectMapper;
 	private static Person person;
 	
-	
 	@BeforeAll
 	public static void setup() {
 		objectMapper = new ObjectMapper();
@@ -53,7 +55,6 @@ class PersonControllerIntegrationTest extends AbstractIntegrationTest {
 		//
 		//no SETBASEPATH nos passamos qual o LINK q vai cair na 
 		//CLASS PERSONCONTROLLER no caso e o /PERSON .... localhost:8888/person
-		//a PORTA q exec o backend nos pegamos do SERVER_PORT do TESTCONFIG
 		specification = new RequestSpecBuilder()
 				.setBasePath("/person")
 				.setPort(TestConfigs.SERVER_PORT)
@@ -92,8 +93,6 @@ class PersonControllerIntegrationTest extends AbstractIntegrationTest {
 		//o statuscode é 200, ou seja q deu ok
 		//
 		//o EXTRACT e para nos extrairmos o BODY como uma STRING
-		//
-		//e todo retorno vai ficar SALVO na VAR CONTENT
 		var content = given().spec(specification)
 				.contentType(TestConfigs.CONTENT_TYPE_JSON)
 				.body(person)
@@ -112,7 +111,7 @@ class PersonControllerIntegrationTest extends AbstractIntegrationTest {
 		Person createPerson = objectMapper.readValue(content, Person.class);
 
 		person = createPerson;
-		
+
 		//ASSERT para poder verificar se O RETORNO do METODO CREATE
 		//ta conforme o esperado
 
@@ -123,8 +122,7 @@ class PersonControllerIntegrationTest extends AbstractIntegrationTest {
 		assertNotNull(createPerson.getAddress());
 		assertNotNull(createPerson.getGender());
 		assertNotNull(createPerson.getEmail());
-				
-		//verificando valores ESPECIFICOS
+
 		assertTrue(createPerson.getId() > 0);
 		assertEquals("Leandro", createPerson.getFirstName());	
 		assertNotNull("Costa", createPerson.getLastName());
@@ -150,7 +148,7 @@ class PersonControllerIntegrationTest extends AbstractIntegrationTest {
 		.extract()
 			.body()
 				.asString();
-				
+		
 		Person updatedPerson = objectMapper.readValue(content, Person.class);
 		person = updatedPerson;
 		
@@ -174,7 +172,7 @@ class PersonControllerIntegrationTest extends AbstractIntegrationTest {
 	@Order(3)
 	@Test
 	void integrationTestGivenPersonObject_when_findById_ShouldReturnAPersonObject() throws JsonMappingException, JsonProcessingException {
-		
+
 		var content = given().spec(specification)
 				.pathParam("id", person.getId())
 		.when()
@@ -184,9 +182,9 @@ class PersonControllerIntegrationTest extends AbstractIntegrationTest {
 		.extract()
 			.body()
 				.asString();
-				
-		Person foundPerson = objectMapper.readValue(content, Person.class);
 		
+		Person foundPerson = objectMapper.readValue(content, Person.class);
+
 		assertNotNull(foundPerson);
 		assertNotNull(foundPerson.getId());
 		assertNotNull(foundPerson.getFirstName());	
@@ -194,13 +192,81 @@ class PersonControllerIntegrationTest extends AbstractIntegrationTest {
 		assertNotNull(foundPerson.getAddress());
 		assertNotNull(foundPerson.getGender());
 		assertNotNull(foundPerson.getEmail());
-		
+
 		assertTrue(foundPerson.getId() > 0);
 		assertEquals("Leonardo", foundPerson.getFirstName());	
 		assertNotNull("Costa", foundPerson.getLastName());
 		assertNotNull("Uberlandia - Minas Gerais - Brasil", foundPerson.getAddress());
 		assertNotNull("Male", foundPerson.getGender());
 		assertNotNull("leonardo@erudio.com.br", foundPerson.getEmail());
+	}
+	
+	@DisplayName("JUnit integration given Person Object when findAll Should Return a Persons List")
+	@Order(4)
+	@Test
+	void integrationTest_when_findByAll_ShouldReturnAPersonsList() throws JsonMappingException, JsonProcessingException {
+
+		Person anotherPerson = new Person("Gabriela", 
+				"Rodriguez", 
+				"gabi@erudio.com.br",
+				"Uberlandia - Minas Gerais - Brasil",
+				"Female"
+			);
+
+		given().spec(specification)
+				.contentType(TestConfigs.CONTENT_TYPE_JSON)
+				.body(anotherPerson)
+		.when()
+			.post()
+		.then()
+			.statusCode(200);
+		
+		var content = given().spec(specification)
+		.when()
+			.get()
+		.then()
+			.statusCode(200)
+		.extract()
+			.body()
+				.asString();
+		
+		Person[] MyArray = objectMapper.readValue(content, Person[].class);
+		List<Person> people = Arrays.asList(MyArray);
+		Person foundPersonOne = people.get(0);
+		
+		assertNotNull(foundPersonOne);
+		assertNotNull(foundPersonOne.getId());
+		assertNotNull(foundPersonOne.getFirstName());	
+		assertNotNull(foundPersonOne.getLastName());
+		assertNotNull(foundPersonOne.getAddress());
+		assertNotNull(foundPersonOne.getGender());
+		assertNotNull(foundPersonOne.getEmail());
+
+		assertTrue(foundPersonOne.getId() > 0);
+		assertEquals("Leonardo", foundPersonOne.getFirstName());	
+		assertNotNull("Costa", foundPersonOne.getLastName());
+		assertNotNull("Uberlandia - Minas Gerais - Brasil", foundPersonOne.getAddress());
+		assertNotNull("Male", foundPersonOne.getGender());
+		assertNotNull("leonardo@erudio.com.br", foundPersonOne.getEmail());
+
+		Person foundPersonTwo = people.get(1);
+		
+		assertNotNull(foundPersonTwo);
+		assertNotNull(foundPersonTwo.getId());
+		assertNotNull(foundPersonTwo.getFirstName());	
+		assertNotNull(foundPersonTwo.getLastName());
+		assertNotNull(foundPersonTwo.getAddress());
+		assertNotNull(foundPersonTwo.getGender());
+		assertNotNull(foundPersonTwo.getEmail());
+		
+		assertTrue(foundPersonTwo.getId() > 0);
+		assertEquals("Gabriela", foundPersonTwo.getFirstName());	
+		assertNotNull("Rodriguez", foundPersonTwo.getLastName());
+		assertNotNull("Uberlandia - Minas Gerais - Brasil", foundPersonTwo.getAddress());
+		assertNotNull("Female", foundPersonTwo.getGender());
+		assertNotNull("gabi@erudio.com.br", foundPersonTwo.getEmail());
+	
+		
 	}
 	
 }

@@ -13,7 +13,7 @@ import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.lifecycle.Startables;
 
 //class de CONFIGURACAO/INFRAESTRUTURA
-//
+
 //classe de INFRAESTRUTURA q sera utilizado por todos TESTS de INTEGRACAO
 //para SUBIR UM BANCO EM RUNTIME
 @ContextConfiguration(initializers = AbstractIntegrationTest.Initializer.class)
@@ -33,7 +33,7 @@ public class AbstractIntegrationTest {
 			"spring.datasource.username", mysql.getUsername(),
 			"spring.datasource.password", mysql.getPassword());
 		}
-
+		
 		@Override
 		public void initialize(ConfigurableApplicationContext applicationContext) {
 			startContainers();
@@ -49,7 +49,7 @@ public class AbstractIntegrationTest {
 
 			environment.getPropertySources().addFirst(testcontainers);
 			
-		}		
+		}
 		
 	}
 }
